@@ -459,33 +459,10 @@ Add A/B testing between multiple models
 
 Implement a feature importance / explainability panel (SHAP)
 
-'@ | Set-Content .\README.md
 
 
-That gives you a **proper GitHub-level README** in one shot.  
-You can now `git add README.md && git commit && git push`.
 
----
 
-## 2️⃣ Resume & Interview Lines
 
-### 🔹 Short resume bullets (pick 2–3)
 
-You can paste under **Projects**:
 
-> **End-to-End Customer Churn Prediction System** – FastAPI, React, scikit-learn, SQLite, Render  
-> - Built a full-stack churn prediction platform with a FastAPI backend, SQLite feature store, and React dashboard deployed on Render (backend: https://churn-backend-7av6.onrender.com, frontend: https://churn-frontend-pgk3.onrender.com).  
-> - Designed an ML pipeline for Telco Customer Churn (EDA, feature engineering, model comparison), trained Logistic Regression and Random Forest models, and exposed the best model behind a production-grade `POST /predict_churn` API.  
-> - Implemented a history and analytics layer with a `predictions` table and `/stats/churn` endpoint, powering a UI that visualizes churn by contract type and payment method using Recharts.  
-
-If you want a very short 1-liner for a summary:
-
-> Developed and deployed an end-to-end churn prediction system (ML pipeline + FastAPI API + React dashboard) with live inference, logging, and churn analytics using Render.
-
----
-
-If you want next, I can help you:
-
-- Write **interview-style explanation** (“Walk me through this project”)  
-- Or adapt this to your **portfolio site** as a project card.
-::contentReference[oaicite:0]{index=0}
