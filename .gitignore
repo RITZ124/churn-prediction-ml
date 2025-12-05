@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+.churn_env/
+.ipynb_checkpoints/
+*.pyc
+.env
+churn.db
+frontend/node_modules/
+frontend/dist/

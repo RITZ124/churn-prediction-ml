@@ -1,0 +1,16 @@
+services:
+  backend:
+    build: .
+    container_name: churn-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./churn.db:/app/churn.db
+
+  frontend:
+    build: ./frontend
+    container_name: churn-frontend
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_API_URL=http://localhost:8000

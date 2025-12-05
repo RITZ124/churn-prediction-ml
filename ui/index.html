@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Customer Churn Prediction</title>
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 32px;
+      background: #020617;
+      border-radius: 20px;
+      padding: 24px 28px 32px;
+      box-shadow: 0 18px 45px rgba(15,23,42,0.9);
+      border: 1px solid #1e293b;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      color: #f9fafb;
+    }
+    .subtitle {
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: #9ca3af;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px 18px;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13px;
+    }
+    label {
+      color: #cbd5f5;
+    }
+    input, select {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 13px;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 1px rgba(99,102,241,0.5);
+    }
+    .actions {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    button {
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      background: linear-gradient(135deg,#6366f1,#8b5cf6);
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .status {
+      font-size: 13px;
+      color: #9ca3af;
+    }
+    .result-card {
+      margin-top: 24px;
+      padding: 16px 18px;
+      border-radius: 16px;
+      border: 1px solid #1f2937;
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.12), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(239,68,68,0.18), transparent 55%),
+                  #020617;
+    }
+    .result-title {
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .pill.low { background: rgba(22,163,74,0.12); color: #4ade80; }
+    .pill.medium { background: rgba(234,179,8,0.12); color: #facc15; }
+    .pill.high { background: rgba(239,68,68,0.12); color: #fca5a5; }
+    .result-prob {
+      margin-top: 6px;
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .result-extra {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #e5e7eb;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Customer Churn Prediction</h1>
+    <div class="subtitle">
+      Enter customer details to estimate churn probability using your ML model.
+    </div>
+
+    <form id="churn-form">
+      <div class="grid">
+        <div class="field">
+          <label for="customerID">Customer ID</label>
+          <input id="customerID" name="customerID" value="TEST-0001" required />
+        </div>
+
+        <div class="field">
+          <label for="gender">Gender</label>
+          <select id="gender" name="gender">
+            <option>Female</option>
+            <option>Male</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="SeniorCitizen">Senior Citizen</label>
+          <select id="SeniorCitizen" name="SeniorCitizen">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="Partner">Partner</label>
+          <select id="Partner" name="Partner">
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="Dependents">Dependents</label>
+          <select id="Dependents" name="Dependents">
+            <option>No</option>
+            <option>Yes</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="tenure">Tenure (months)</label>
+          <input id="tenure" name="tenure" type="number" min="0" value="1" required />
+        </div>
+
+        <div class="field">
+          <label for="PhoneService">Phone Service</label>
+          <select id="PhoneService" name="PhoneService">
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="MultipleLines">Multiple Lines</label>
+          <select id="MultipleLines" name="MultipleLines">
+            <option>No</option>
+            <option>Yes</option>
+            <option>No phone service</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="InternetService">Internet Service</label>
+          <select id="InternetService" name="InternetService">
+            <option>DSL</option>
+            <option>Fiber optic</option>
+            <option>No</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="OnlineSecurity">Online Security</label>
+          <select id="OnlineSecurity" name="OnlineSecurity">
+            <option>No</option>
+            <option>Yes</option>
+            <option>No internet service</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="OnlineBackup">Online Backup</label>
+          <select id="OnlineBackup" name="OnlineBackup">
+            <option>No</option>
+            <option>Yes</option>
+            <option>No internet service</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="DeviceProtection">Device Protection</label>
+          <select id="DeviceProtection" name="DeviceProtection">
+            <option>No</option>
+            <option>Yes</option>
+            <option>No internet service</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="TechSupport">Tech Support</label>
+          <select id="TechSupport" name="TechSupport">
+            <option>No</option>
+            <option>Yes</option>
+            <option>No internet service</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="StreamingTV">Streaming TV</label>
+          <select id="StreamingTV" name="StreamingTV">
+            <option>No</option>
+            <option>Yes</option>
+            <option>No internet service</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="StreamingMovies">Streaming Movies</label>
+          <select id="StreamingMovies" name="StreamingMovies">
+            <option>No</option>
+            <option>Yes</option>
+            <option>No internet service</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="Contract">Contract</label>
+          <select id="Contract" name="Contract">
+            <option>Month-to-month</option>
+            <option>One year</option>
+            <option>Two year</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="PaperlessBilling">Paperless Billing</label>
+          <select id="PaperlessBilling" name="PaperlessBilling">
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="PaymentMethod">Payment Method</label>
+          <select id="PaymentMethod" name="PaymentMethod">
+            <option>Electronic check</option>
+            <option>Mailed check</option>
+            <option>Bank transfer (automatic)</option>
+            <option>Credit card (automatic)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="MonthlyCharges">Monthly Charges</label>
+          <input id="MonthlyCharges" name="MonthlyCharges" type="number" min="0" step="0.01" value="70.0" required />
+        </div>
+
+        <div class="field">
+          <label for="TotalCharges">Total Charges (optional)</label>
+          <input id="TotalCharges" name="TotalCharges" type="number" min="0" step="0.01" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" id="submit-btn">
+          ?? Predict Churn
+        </button>
+        <div class="status" id="status-text">Ready.</div>
+      </div>
+    </form>
+
+    <div id="result-card" class="result-card hidden">
+      <div class="result-title">
+        <span>Churn Risk</span>
+        <span id="risk-pill" class="pill">-</span>
+      </div>
+      <div id="prob-text" class="result-prob">--%</div>
+      <div id="extra-text" class="result-extra"></div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("churn-form");
+    const submitBtn = document.getElementById("submit-btn");
+    const statusText = document.getElementById("status-text");
+    const resultCard = document.getElementById("result-card");
+    const probText = document.getElementById("prob-text");
+    const extraText = document.getElementById("extra-text");
+    const riskPill = document.getElementById("risk-pill");
+
+    function getValue(id) {
+      return document.getElementById(id).value;
+    }
+
+    function getNumeric(id) {
+      const v = document.getElementById(id).value;
+      if (v === "" || v === null) return null;
+      return Number(v);
+    }
+
+    function setRiskLabel(label, prob) {
+      riskPill.textContent = label + " RISK";
+      riskPill.classList.remove("low", "medium", "high");
+      const p = label.toLowerCase();
+      if (p === "low") riskPill.classList.add("low");
+      if (p === "medium") riskPill.classList.add("medium");
+      if (p === "high") riskPill.classList.add("high");
+      probText.textContent = (prob * 100).toFixed(1) + "%";
+      if (label === "HIGH") {
+        extraText.textContent = "Customer is very likely to churn. Consider retention offers, discounts, or proactive support.";
+      } else if (label === "MEDIUM") {
+        extraText.textContent = "Moderate churn risk. Monitor usage and engagement, and nudge with targeted campaigns.";
+      } else {
+        extraText.textContent = "Low churn risk. Maintain service quality and engagement to keep churn low.";
+      }
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      statusText.textContent = "Predicting...";
+      resultCard.classList.add("hidden");
+
+      const payload = {
+        customerID: getValue("customerID"),
+        gender: getValue("gender"),
+        SeniorCitizen: Number(getValue("SeniorCitizen")),
+        Partner: getValue("Partner"),
+        Dependents: getValue("Dependents"),
+        tenure: Number(getValue("tenure")),
+        PhoneService: getValue("PhoneService"),
+        MultipleLines: getValue("MultipleLines"),
+        InternetService: getValue("InternetService"),
+        OnlineSecurity: getValue("OnlineSecurity"),
+        OnlineBackup: getValue("OnlineBackup"),
+        DeviceProtection: getValue("DeviceProtection"),
+        TechSupport: getValue("TechSupport"),
+        StreamingTV: getValue("StreamingTV"),
+        StreamingMovies: getValue("StreamingMovies"),
+        Contract: getValue("Contract"),
+        PaperlessBilling: getValue("PaperlessBilling"),
+        PaymentMethod: getValue("PaymentMethod"),
+        MonthlyCharges: getNumeric("MonthlyCharges"),
+        TotalCharges: getNumeric("TotalCharges")
+      };
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/predict_churn", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error("API error: " + response.status);
+        }
+
+        const data = await response.json();
+        setRiskLabel(data.risk_label, data.churn_probability);
+        resultCard.classList.remove("hidden");
+        statusText.textContent = "Prediction successful.";
+      } catch (err) {
+        console.error(err);
+        statusText.textContent = "Error: " + err.message;
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
